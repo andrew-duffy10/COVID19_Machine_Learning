@@ -13,6 +13,7 @@ class SklearnAgent(MultipleRegressionAgent):
         """
         Runs a multiple regression over the independent variables in X to see their weighted relationship to the
         dependent variable in y.
+
         :param X: A List of column names (variables) whose weights will be found
         :param y: A column name (variable) that is dependent on the variables in X
         :return: The list of coefficients calculated by the regression algorithm
