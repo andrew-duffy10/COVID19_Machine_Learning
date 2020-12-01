@@ -22,6 +22,8 @@ class HomebrewAgent(MultipleRegressionAgent):
         """
         linear_regression = linear_model.LinearRegression()
         linear_regression.fit(X, y)
+        print(linear_regression.predict([[3000,2000]]))
+
         return linear_regression.coef_
 
 
