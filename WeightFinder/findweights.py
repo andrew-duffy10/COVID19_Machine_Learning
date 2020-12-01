@@ -7,6 +7,13 @@ USAGE = "Usage: ./findweights -agent <sklearn | homebrew> -state [U.S. state] -d
 
 
 def parse_args(argv):
+    """
+    Parses command line arguments into interpretable values. Prints usage message if the given args. aren't valid
+
+    :param argv: the command line arguments
+    :return: strings representing the type of agent, the state to read, and the start/end days of the time interval.
+             Note: some of these args are optional and will be None.
+    """
     agent_type = None
     state = None
     start_day = None
@@ -32,6 +39,19 @@ def parse_args(argv):
 
 
 def run_agent(agent, state, start_day, end_day):
+    """
+    Depending on the given arguments, either calculates aggregated variable weights across all 50 states
+    on a given day or calculates variable weights for a specific state over a given time interval
+    usage 1: ./findweights -agent <sklearn | homebrew> -d1 <MM-DD-YYYY>
+    usage 2:./findweights -agent <sklearn | homebrew> -state [U.S. state] -d1 <MM-DD-YYYY> -d2 [MM-DD-YYYY]
+
+    :param agent: an instance of some regression agent that will be used to calcualate variable weights
+    :param state: an optional value containing the state to look at
+    :param start_day: The first day on the time interval to run a regression
+    :param end_day: The last day on the time interval to run a regression
+    :return: a dictionary mapping the independent variables with the weighted variable coefficients
+
+    """
     if state and start_day and end_day:
         coefficients = agent.run_for_us_state(state, start_day, end_day)
     elif start_day and not state and not end_day:
@@ -43,6 +63,12 @@ def run_agent(agent, state, start_day, end_day):
 
 
 def main(argv):
+    """
+    Runs a multiple regression using the specified values in argv.
+
+    :param argv: the command line arguments
+    :return: a dictionary mapping the independent variables with the weighted variable coefficients
+    """
     agent_type, state, start_day, end_day = parse_args(argv)
     independent_variables = ['Confirmed', 'People_Tested']
     dependent_variable = 'Incident_Rate'

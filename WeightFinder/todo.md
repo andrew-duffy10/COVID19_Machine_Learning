@@ -3,6 +3,7 @@
 - [X] create a data accumulator that gets the data from github
 - [X] create a generic regression agent class
 - [X] create sklearn implementation of the regression agent class
+- [ ] add documentation to everything
 - [ ] implement a homebrewed algorithm to replace the sklearn agent
 - [ ] add prediction functionality using the variable weights returned by our regression agents
     - the prediction function should take in variable values and returns an estimate for the dependent variable

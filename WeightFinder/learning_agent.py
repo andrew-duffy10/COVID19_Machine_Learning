@@ -1,9 +1,13 @@
+from abc import ABC, abstractmethod
 
 from WeightFinder.data_accumulation import DataAcc
 
 
-class MultipleRegressionAgent:
-
+class MultipleRegressionAgent(ABC):
+    """
+    A generic regression agent that is missing a regression algorithm. Extend this class and implement run_regression
+    to calculate variable weights and make predictions.
+    """
     def __init__(self, independent_variables, dependent_variable):
         self.X = independent_variables
         self.y = dependent_variable
@@ -12,6 +16,7 @@ class MultipleRegressionAgent:
 
     def run_for_us_state(self, state, start_day, end_day):
         """
+        Calculates the variable weights for the given state over a daily time-interval
 
         :param start_day: The first day of the timeseries to run a regression on
         :param end_day: the last day of the timeseries to run a regression on
@@ -33,6 +38,7 @@ class MultipleRegressionAgent:
     def run_for_day(self, date):
         """
         Runs a multiple-variable regression across all 50 states on a particular day and finds the variable coefficients
+
         :param date: the day whose variables will be used to run the regression
         :return: a dictionary containing the regressed coefficients mapped to the variable name
         """
@@ -50,9 +56,21 @@ class MultipleRegressionAgent:
     def pull_data(self, start_day, end_day):
         """
         Pulls the data from github and filters it to the columns needed for this regression
+
+        :param start_day: The first day on the time interval to pull data for
+        :param end_day: The last day on the time interval to pull data for
         """
         fields = ['Province_State'] + self.X + [self.y]
         self.data_acc.pull_data(start_day, end_day, fields)
 
+    @abstractmethod
     def run_regression(self,X,y):
+        """
+        Runs a multiple regression over the independent variables in X to see their weighted relationship to the
+        dependent variable in y.
+
+        :param X: A List of column names (variables) whose weights will be found
+        :param y: A column name (variable) that is dependent on the variables in X
+        :raises NotImplementedError: This class is abstract. Call one of its extensions.
+        """
         raise NotImplementedError("Do not use this super class to run a regression. Instead, call homebrew_agent or sklearn_agent")
