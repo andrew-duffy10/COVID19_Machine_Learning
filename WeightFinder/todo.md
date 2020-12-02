@@ -9,6 +9,7 @@
 - [ ] look into combining features if they're potentially dependent
 - [ ] training -> holdout( run a bunch of feature combos and pick the best one) -> validating
 - [ ] Some kind of user interface that allows them to set variables and data sets
+- [ ] Update project memo
 
 ## Assignments
 ### *Andrew:*
