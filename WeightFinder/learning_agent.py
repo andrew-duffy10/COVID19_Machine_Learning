@@ -69,8 +69,8 @@ class MultipleRegressionAgent(ABC):
         Runs a multiple regression over the independent variables in X to see their weighted relationship to the
         dependent variable in y.
 
-        :param X: A List of column names (variables) whose weights will be found
-        :param y: A column name (variable) that is dependent on the variables in X
+        :param X: A List of colums (variables) whose weights will be found with respect to y
+        :param y: A column (variable) that is dependent on the variables in X
         :raises NotImplementedError: This class is abstract. Call one of its extensions.
         """
         raise NotImplementedError("Do not use this super class to run a regression. Instead, call homebrew_agent or sklearn_agent")
