@@ -24,6 +24,11 @@ class SklearnAgent(MultipleRegressionAgent):
         return self.linear_regression.coef_
 
     def predict(self,entry:list):
+        """
+
+        :param entry:
+        :return:
+        """
         return self.linear_regression.predict([entry])[0]
 
 

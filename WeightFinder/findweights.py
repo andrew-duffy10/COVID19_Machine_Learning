@@ -2,6 +2,7 @@ import sys
 
 from WeightFinder.homebrew_agent import HomebrewAgent
 from WeightFinder.sklearn_agent import SklearnAgent
+from WeightFinder.test_nn import neural
 
 USAGE = "Usage: ./findweights -agent <sklearn | homebrew> -state [U.S. state] -d1 <Initial date> -d2 [Ending date]"
 
@@ -75,8 +76,11 @@ def main(argv):
     if agent_type == "sklearn":
         agent = SklearnAgent(independent_variables, dependent_variable)
         coefficients = run_agent(agent, state, start_day, end_day)
-    else:
+    elif agent_type == "homebrew":
         agent = HomebrewAgent(independent_variables, dependent_variable)
+        coefficients = run_agent(agent, state, start_day, end_day)
+    elif agent_type == "neural":
+        agent = neural(independent_variables, dependent_variable)
         coefficients = run_agent(agent, state, start_day, end_day)
     print(coefficients)
     return coefficients

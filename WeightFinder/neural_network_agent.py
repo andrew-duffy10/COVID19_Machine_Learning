@@ -1,4 +1,4 @@
-from learning_agent import MultipleRegressionAgent
+from WeightFinder.learning_agent import MultipleRegressionAgent
 from sklearn import linear_model
 
 
