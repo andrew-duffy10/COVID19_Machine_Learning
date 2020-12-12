@@ -1,5 +1,6 @@
+import numpy as np
+
 from WeightFinder.learning_agent import MultipleRegressionAgent
-from sklearn import linear_model
 
 
 class HomebrewAgent(MultipleRegressionAgent):
@@ -7,24 +8,44 @@ class HomebrewAgent(MultipleRegressionAgent):
     #TODO: implement
     Implements a multiple regression agent using a homebrewed regression algorithm.
     """
+
     def __init__(self, independent_variables, dependent_variable):
         super().__init__(independent_variables, dependent_variable)
+        self.coefficients = None
+        self.intercept = None
 
     def run_regression(self, X, y):
         """
-        #TODO: implement
-        Runs a multiple regression over the independent variables in X to see their weighted relationship to the
-        dependent variable in y.
 
-        :param X: A List of colums (variables) whose weights will be found with respect to y
-        :param y: A column (variable) that is dependent on the variables in X
-        :return: The list of coefficients calculated by the regression algorithm
+        :param X:
+        :param y:
+        :return:
         """
-        linear_regression = linear_model.LinearRegression()
-        linear_regression.fit(X, y)
-        print(linear_regression.predict([[20000,9]]))
+        if len(X.shape) == 1:
+            X = X.reshape(-1, 1)
+        X = self._add_intercept(X)
+        weights = np.linalg.inv(X.transpose().dot(X)).dot(X.transpose()).dot(y)
+        self.intercept = weights[0]
+        self.coefficients = weights[1:]
+        return self.coefficients
 
-        return linear_regression.coef_
+    @staticmethod
+    def _add_intercept(X):
+        """
 
+        :param X:
+        :return:
+        """
+        ones = np.ones(shape=X.shape[0]).reshape(-1, 1)
+        return np.concatenate((ones, X), 1)
 
+    def predict(self, entry):
+        """
 
+        :param entry:
+        :return:
+        """
+        prediction = self.intercept
+        for value, coeff in zip(entry, self.coefficients):
+            prediction += (value * coeff)
+        return prediction

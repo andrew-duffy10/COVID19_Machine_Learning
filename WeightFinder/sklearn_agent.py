@@ -8,6 +8,7 @@ class SklearnAgent(MultipleRegressionAgent):
     """
     def __init__(self, independent_variables, dependent_variable):
         super().__init__(independent_variables, dependent_variable)
+        self.linear_regression = None
 
     def run_regression(self, X, y):
         """
@@ -18,9 +19,12 @@ class SklearnAgent(MultipleRegressionAgent):
         :param y: A column (variable) that is dependent on the variables in X
         :return: The list of coefficients calculated by the regression algorithm
         """
-        linear_regression = linear_model.LinearRegression()
-        linear_regression.fit(X, y)
-        return linear_regression.coef_
+        self.linear_regression = linear_model.LinearRegression()
+        self.linear_regression.fit(X, y)
+        return self.linear_regression.coef_
+
+    def predict(self,entry:list):
+        return self.linear_regression.predict([entry])[0]
 
 
 

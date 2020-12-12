@@ -31,7 +31,7 @@ class MultipleRegressionAgent(ABC):
         if len(X) < 1:
             raise ValueError(f"No data found for {state} over the date range {start_day} to {end_day}.")
         self.variable_weights = self.run_regression(X, y)
-
+        print(self.predict([25475,8.773307]))
         variable_weights = {self.X[i]: self.variable_weights[i] for i in range(len(self.X))}
         return variable_weights
 
