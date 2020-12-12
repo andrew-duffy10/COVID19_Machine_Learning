@@ -70,8 +70,8 @@ def main(argv):
     :return: a dictionary mapping the independent variables with the weighted variable coefficients
     """
     agent_type, state, start_day, end_day = parse_args(argv)
-    independent_variables = ['Confirmed', 'People_Tested']
-    dependent_variable = 'Incident_Rate'
+    independent_variables = ['Confirmed', 'Hospitalization_Rate']
+    dependent_variable = 'Mortality_Rate'
     if agent_type == "sklearn":
         agent = SklearnAgent(independent_variables, dependent_variable)
         coefficients = run_agent(agent, state, start_day, end_day)
