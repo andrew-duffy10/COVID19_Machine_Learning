@@ -16,6 +16,7 @@ run_type = True
 helper_agent = HomebrewAgent(independent_variables,dependent_variable)
 helper_agent.pull_data(start_day, end_day)
 dataAcc = helper_agent.data_acc
+output_path = "/Users/andrewduffy/Documents/Fall2020NEU/CS4100/Final Project/CS4100_FinalProject/regression_output.xlsx"
 
 
 def run_agent(agent, state):
@@ -72,7 +73,7 @@ def run_every_state():
             except:
                 print("error with:",state)
                 continue
-    full_table.to_excel("/Users/andrewduffy/Documents/Fall2020NEU/CS4100/Final Project/CS4100_FinalProject/regression_output.xlsx",sheet_name='Accumulated')
+    full_table.to_excel(output_path,sheet_name='Accumulated')
 
         #sys.exit(1)
 
