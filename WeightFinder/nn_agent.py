@@ -9,15 +9,15 @@ class NeuralNetworkAgent(MultipleRegressionAgent):
     A neural network implementation using one hidden layer and sigmoid activation
     """
 
-    def __init__(self, independent_variables, dependent_variable):
+    def __init__(self, independent_variables, dependent_variable,data_acc = None):
         """
         Initialize parameters and weight vectors
         NOTE: all 'scalars' are used for data normalization
         :param independent_variables: The list of independent variables
         :param dependent_variable: The list of dependent variables
         """
-        super().__init__(independent_variables, dependent_variable)
-
+        super().__init__(independent_variables, dependent_variable,data_acc)
+        self.agent = 'neural'
         # Accumulate scalars for the input matrices (used to map large integers to a 0-1 numberline)
         self.input_scalars = []
         for i in independent_variables:
@@ -49,7 +49,7 @@ class NeuralNetworkAgent(MultipleRegressionAgent):
         """
         Trains the NN's weight vector (self.coefficients) over the given input data
         :param X:
-        :param training_outputs:
+        :param y:
         :param num_cycles:
         """
         for _ in range(num_cycles):
@@ -99,4 +99,4 @@ class NeuralNetworkAgent(MultipleRegressionAgent):
             prediction += (value * coeff)
 
         unscaled = self.output_scalar.inverse_transform([prediction])
-        return unscaled[0]
+        return unscaled[0][0]

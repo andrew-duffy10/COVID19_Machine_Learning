@@ -2,8 +2,7 @@ import sys
 
 from WeightFinder.homebrew_agent import HomebrewAgent
 from WeightFinder.sklearn_agent import SklearnAgent
-from WeightFinder.test_nn import NeuralNetworkAgent
-from WeightFinder.sklearn_agent_nn import SklearnAgentNN
+from WeightFinder.nn_agent import NeuralNetworkAgent
 
 USAGE = "Usage: ./findweights -agent <sklearn | homebrew> -state [U.S. state] -d1 <Initial date> -d2 [Ending date]"
 
@@ -85,6 +84,8 @@ def main(argv):
         agent = NeuralNetworkAgent(independent_variables, dependent_variable)
         coefficients = run_agent(agent, state, start_day, end_day)
     print(coefficients)
+    print(agent.predict([3667, 12.26494527]))
+
     return coefficients
 
 

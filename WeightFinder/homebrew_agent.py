@@ -1,4 +1,5 @@
 import numpy as np
+from numpy.linalg import LinAlgError
 
 from WeightFinder.learning_agent import MultipleRegressionAgent
 
@@ -8,10 +9,11 @@ class HomebrewAgent(MultipleRegressionAgent):
     Implements a multiple regression agent using a homebrewed regression algorithm.
     """
 
-    def __init__(self, independent_variables, dependent_variable):
-        super().__init__(independent_variables, dependent_variable)
-        self.coefficients = None
+    def __init__(self, independent_variables, dependent_variable,data_acc = None):
+        super().__init__(independent_variables, dependent_variable,data_acc)
+        self.coefficients = []
         self.intercept = None
+        self.agent = 'homebrew'
 
     def run_regression(self, X, y):
         """
@@ -25,7 +27,10 @@ class HomebrewAgent(MultipleRegressionAgent):
         if len(X.shape) == 1:
             X = X.reshape(-1, 1)
         X = self._add_intercept(X)
-        weights = np.linalg.inv(X.transpose().dot(X)).dot(X.transpose()).dot(y)
+        try:
+            weights = np.linalg.inv(X.transpose().dot(X)).dot(X.transpose()).dot(y)
+        except LinAlgError:
+            return self.coefficients
         self.intercept = weights[0]
         self.coefficients = weights[1:]
         return self.coefficients

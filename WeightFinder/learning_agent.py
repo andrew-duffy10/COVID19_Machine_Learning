@@ -8,11 +8,14 @@ class MultipleRegressionAgent(ABC):
     A generic regression agent that is missing a regression algorithm. Extend this class and implement run_regression
     to calculate variable weights and make predictions.
     """
-    def __init__(self, independent_variables, dependent_variable):
+    def __init__(self, independent_variables, dependent_variable,data_acc = None):
         self.X = independent_variables
         self.y = dependent_variable
-        self.data_acc = DataAcc()
-        self.variable_weights = None
+        if not data_acc:
+            self.data_acc = DataAcc()
+        else:
+            self.data_acc = data_acc
+        self.variable_weights = []
 
     def run_for_us_state(self, state, start_day, end_day):
         """
@@ -23,18 +26,21 @@ class MultipleRegressionAgent(ABC):
         :param state: a US state name. ex: 'Massachusetts', 'Kansas', 'California', ...
         :return: a dictionary containing the regressed coefficients mapped to the variable name
         """
-        self.pull_data(start_day, end_day)
+        if len(self.data_acc.data) == 0:
+            self.pull_data(start_day, end_day)
         data = self.data_acc.get_state(state)
         data = data.dropna()
         X = data[self.X]
         y = data[self.y]
         if len(X) < 1:
-            raise ValueError(f"No data found for {state} over the date range {start_day} to {end_day}.")
+            return None
+            #raise ValueError(f"No data found for {state} over the date range {start_day} to {end_day}.")
         self.variable_weights = self.run_regression(X, y)
-        print(self.predict([25475,8.773307]))
-        #
-        variable_weights = {self.X[i]: self.variable_weights[i] for i in range(len(self.X))}
-        return variable_weights
+        if len(self.variable_weights) > 0:
+            variable_weights = {self.X[i]: self.variable_weights[i] for i in range(len(self.X))}
+            return variable_weights
+        else:
+            return None
 
     def run_for_day(self, date):
         """
