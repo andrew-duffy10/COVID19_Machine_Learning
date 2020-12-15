@@ -9,8 +9,8 @@ class HomebrewAgent(MultipleRegressionAgent):
     Implements a multiple regression agent using a homebrewed regression algorithm.
     """
 
-    def __init__(self, independent_variables, dependent_variable):
-        super().__init__(independent_variables, dependent_variable)
+    def __init__(self, independent_variables, dependent_variable,data_acc = None):
+        super().__init__(independent_variables, dependent_variable,data_acc)
         self.coefficients = []
         self.intercept = None
         self.agent = 'homebrew'

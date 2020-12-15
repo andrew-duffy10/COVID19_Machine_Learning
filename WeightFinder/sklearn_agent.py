@@ -6,8 +6,8 @@ class SklearnAgent(MultipleRegressionAgent):
     """
     Implements a multiple regression agent using the sklearn library's regression functions.
     """
-    def __init__(self, independent_variables, dependent_variable):
-        super().__init__(independent_variables, dependent_variable)
+    def __init__(self, independent_variables, dependent_variable,data_acc = None):
+        super().__init__(independent_variables, dependent_variable,data_acc)
         self.linear_regression = None
         self.agent = 'sklearn'
 

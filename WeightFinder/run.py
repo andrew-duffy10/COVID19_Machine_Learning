@@ -9,7 +9,7 @@ import openpyxl
 
 USAGE = "Usage: ./findweights -agent <sklearn | homebrew> -state [U.S. state] -d1 <Initial date> -d2 [Ending date]"
 
-state, start_day, end_day = 'Alabama' , '04-12-2020' , '04-20-2020'
+init_state, start_day, end_day = 'Alabama' , '04-12-2020' , '12-14-2020'
 independent_variables = ['Confirmed', 'Hospitalization_Rate']
 dependent_variable = 'Mortality_Rate'
 run_type = True
@@ -44,13 +44,13 @@ def run_every_state():
     full_table = pd.DataFrame(columns=['agent', 'state', 'predicted', 'actual', 'error'])
     for state in dataAcc.data['04-12-2020']['Province_State']:
         print(state)
-        sk_agent = SklearnAgent(independent_variables, dependent_variable)
+        sk_agent = SklearnAgent(independent_variables, dependent_variable,dataAcc)
         sk_coefficients = run_agent(sk_agent, state)
 
-        hb_agent = HomebrewAgent(independent_variables, dependent_variable)
+        hb_agent = HomebrewAgent(independent_variables, dependent_variable,dataAcc)
         hb_coefficients = run_agent(hb_agent, state)
 
-        nn_agent = NeuralNetworkAgent(independent_variables, dependent_variable)
+        nn_agent = NeuralNetworkAgent(independent_variables, dependent_variable,dataAcc)
         nn_coefficients = run_agent(nn_agent, state)
 
         if sk_coefficients and hb_coefficients and nn_coefficients:
@@ -76,7 +76,7 @@ def run_every_state():
             except:
                 print("error with:",state)
                 continue
-    full_table.to_excel("/Users/andrewduffy/Documents/Fall2020NEU/CS4100/Final Project/regression_output.xlsx",sheet_name='Accumulated')
+    full_table.to_excel("/Users/andrewduffy/Documents/Fall2020NEU/CS4100/Final Project/CS4100_FinalProject/regression_output.xlsx",sheet_name='Accumulated')
 
         #sys.exit(1)
 
