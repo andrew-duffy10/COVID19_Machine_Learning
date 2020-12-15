@@ -1,16 +1,16 @@
 import numpy as np
 from numpy.linalg import LinAlgError
 
-from WeightFinder.learning_agent import MultipleRegressionAgent
+from WeightFinder.learning_agent import RegressionAgent
 
 
-class HomebrewAgent(MultipleRegressionAgent):
+class HomebrewAgent(RegressionAgent):
     """
     Implements a multiple regression agent using a homebrewed regression algorithm.
     """
 
-    def __init__(self, independent_variables, dependent_variable,data_acc = None):
-        super().__init__(independent_variables, dependent_variable,data_acc)
+    def __init__(self, independent_variables, dependent_variable, data_acc=None):
+        super().__init__(independent_variables, dependent_variable, data_acc)
         self.coefficients = []
         self.intercept = None
         self.agent = 'homebrew'
@@ -26,7 +26,7 @@ class HomebrewAgent(MultipleRegressionAgent):
         """
         if len(X.shape) == 1:
             X = X.reshape(-1, 1)
-        X = self._add_intercept(X)
+        X = self.add_intercept(X)
         try:
             weights = np.linalg.inv(X.transpose().dot(X)).dot(X.transpose()).dot(y)
         except LinAlgError:
@@ -35,8 +35,7 @@ class HomebrewAgent(MultipleRegressionAgent):
         self.coefficients = weights[1:]
         return self.coefficients
 
-    @staticmethod
-    def _add_intercept(X):
+    def add_intercept(self, X):
         """
         Add a column to the input that can be used to accumulate an intercept/bias value (target variable to independent variables)
         :param X: The independent variable input matrix

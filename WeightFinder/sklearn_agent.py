@@ -1,8 +1,8 @@
-from WeightFinder.learning_agent import MultipleRegressionAgent
+from WeightFinder.learning_agent import RegressionAgent
 from sklearn import linear_model
 
 
-class SklearnAgent(MultipleRegressionAgent):
+class SklearnAgent(RegressionAgent):
     """
     Implements a multiple regression agent using the sklearn library's regression functions.
     """
