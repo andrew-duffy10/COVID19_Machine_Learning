@@ -1,125 +1,89 @@
-from WeightFinder.learning_agent import MultipleRegressionAgent
-from sklearn import linear_model
-import pandas as pd
 import numpy as np
-from WeightFinder import nn
+from WeightFinder.data_accumulation import DataAcc
+from WeightFinder.learning_agent import MultipleRegressionAgent
+import sys
+from sklearn import datasets
+from sklearn.preprocessing import MinMaxScaler
+from scipy import stats
 
 
-class neural(MultipleRegressionAgent):
-    """
-    A model for handwritten digit classification using the MNIST dataset.
+class NeuralNetwork(MultipleRegressionAgent):
 
-    Each handwritten digit is a 28x28 pixel grayscale image, which is flattened
-    into a 784-dimensional vector for the purposes of this model. Each entry in
-    the vector is a floating point number between 0 and 1.
-
-    The goal is to sort each digit into one of 10 classes (number 0 through 9).
-
-    (See RegressionModel for more information about the APIs of different
-    methods here. We recommend that you implement the RegressionModel before
-    working on this part of the project.)
-    """
-
-    def __init__(self,independent_variables, dependent_variable):
-        # Initialize your model parameters here
+    def __init__(self, independent_variables, dependent_variable):
         super().__init__(independent_variables, dependent_variable)
+        # seeding for random number generation
+        np.random.seed(1)
+        self.input_scalers = []
+        for i in independent_variables:
+            self.input_scalers.append(MinMaxScaler(feature_range=(-1,1)))
+        self.output_scaler = MinMaxScaler(feature_range=(-1,1))
 
-        self.batch_size = 1
-        self.hidden_layer_size = 150
-        self.input_vector_size = 2  # The length of the input vector
-        self.learning_rate = 0.1  # How quickly this nn accepts new weights
-        self.W1 = nn.Parameter(self.input_vector_size, self.hidden_layer_size)  # i x h matrix
-        self.b1 = nn.Parameter(1, self.hidden_layer_size)  # bias 1
-        self.W2 = nn.Parameter(self.hidden_layer_size, self.batch_size)  # h x i matrix (to pass mult. with relu)
-        self.b2 = nn.Parameter(1, self.batch_size)  # bias 2
+        # converting weights to a 3 by 1 matrix with values from -1 to 1 and mean of 0
+        self.synaptic_weights = 2 * np.random.random((1, 1)) - 1
 
-    def run(self, x):
-        """
-        Runs the model for a batch of examples.
+    def sigmoid(self, x):
+        # applying the sigmoid function
+        return 1 / (1 + np.exp(-x))
 
-        Your model should predict a node with shape (batch_size x 10),
-        containing scores. Higher scores correspond to greater probability of
-        the image belonging to a particular class.
+    def sigmoid_derivative(self, x):
+        # computing derivative to the Sigmoid function
+        return x * (1 - x)
 
-        Inputs:
-            x: a node with shape (batch_size x 784)
-        Output:
-            A node with shape (batch_size x 10) containing predicted scores
-                (also called logits)
-        """
-        "*** YOUR CODE HERE ***"
-        # f(x)=relu(x⋅W1+b1)⋅W2+b2
-        linear1 = nn.Linear(x, self.W1)  # x*W1
-        # print("linear1: ",linear1)
-        bias1 = nn.AddBias(linear1, self.b1)  # x*W1+b1
-        # print("bias1: ", bias1)
-        relu = nn.ReLU(bias1)  # relu(x*W1+b1)
-        # print("relu: ",relu)
-        linear2 = nn.Linear(relu, self.W2)  # relu(x*W1+b1)*W1
-        # 10 x 1 and 1 x 784
-        # print("linear2: ",linear2)
-        bias2 = nn.AddBias(linear2, self.b2)  # relu(x*W1+b1)*W1+b2
-        return bias2
+    def train(self, training_inputs, training_outputs, training_iterations):
+        # training the model to make accurate predictions while adjusting weights continually
+        for iteration in range(training_iterations):
+            # siphon the training data via  the neuron
+            output = self.think(training_inputs)
 
-    def get_loss(self, x, y):
-        """
-        Computes the loss for a batch of examples.
+            error = training_outputs - output
+            #print(output)
+            #print(training_outputs)
+            #sys.exit(1)
+            adjustments = np.dot(training_inputs.T, error * self.sigmoid_derivative(output))
 
-        The correct labels `y` are represented as a node with shape
-        (batch_size x 10). Each row is a one-hot vector encoding the correct
-        digit class (0-9).
+            self.synaptic_weights += adjustments
 
-        Inputs:
-            x: a node with shape (batch_size x 784)
-            y: a node with shape (batch_size x 10)
-        Returns: a loss node
-        """
-        "*** YOUR CODE HERE ***"
-        return nn.SoftmaxLoss(self.run(x), y)
+    def think(self, inputs):
+        # passing the inputs via the neuron to get output
+        # converting values to floats
+
+        inputs = inputs.astype(np.float128)
+        output = self.sigmoid(np.dot(inputs, self.synaptic_weights))
+
+        return output
+
 
     def run_regression(self, X, y):
-        """
-        Trains the model.
-        """
-        "*** YOUR CODE HERE ***"
-        i = 0
 
-        X = X.to_numpy()
-        X = nn.Constant(X)
+        X = X.to_numpy(dtype=np.float128)
+        y = np.array([y], dtype=np.float128).T
+        print(X)
+        self.output_scaler.fit(y)
+        self.input_scalers[0].fit(X)
+        X = self.input_scalers[0].transform(X)
+        y = self.output_scaler.transform(y)
+        print(X)
+        self.train(X, y, 15000)
+        self.variable_weights = self.synaptic_weights
 
-        y = y.to_numpy()
-        y = nn.Constant(y)
+        return self.variable_weights
+        #self.train(X.to_numpy(dtype=np.float128), np.array([y.to_numpy()], dtype=np.float128).T, 15000)
 
-        while True:
+        #self.variable_weights = self.synaptic_weights
+
+    def predict(self,entry:list):
+
+        prediction = 0
+        print("entry:",entry)
+        print("e2:",np.array([entry[0]]).reshape(-1, 1))
+        print("weights:",self.synaptic_weights)
+        entry = self.input_scalers[0].transform(np.array([entry[0]]).reshape(-1, 1))
+        for value, coeff in zip(entry, self.synaptic_weights):
+            prediction += (value * coeff)
+
+        print("prediction:")
+        return self.output_scaler.inverse_transform([prediction])
 
 
-            params = [self.W1, self.b1, self.W2, self.b2]
-            loss = self.get_loss(X, y)
-            gradients = nn.gradients(loss, params)
-            for idx, param in enumerate(params):
-                param.update(gradients[idx], -1.0 * self.learning_rate)
-
-            if i % 10 == 0:
-                print(params)
-            if i >= 100:
-                break
-            i+=1
-
-"""
-        while True:
-
-            for x_node, y_node in zip(X,y):
-
-                params = [self.W1, self.b1, self.W2, self.b2]
-                loss = self.get_loss(x_node, y_node)
-                gradients = nn.gradients(loss, params)
-                for idx, param in enumerate(params):
-                    param.update(gradients[idx], -1.0 * self.learning_rate)
-
-                if i % 10 == 0:
-                    print(params)
-                if i >= 100:
-                    break
-                i+=1
-"""
-
+        #print(self.think(np.array(X[0])))
+        #return self.variable_weights
