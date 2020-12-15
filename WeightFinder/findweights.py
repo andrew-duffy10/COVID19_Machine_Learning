@@ -2,7 +2,7 @@ import sys
 
 from WeightFinder.homebrew_agent import HomebrewAgent
 from WeightFinder.sklearn_agent import SklearnAgent
-from WeightFinder.test_nn import neural
+from WeightFinder.test_nn import NeuralNetwork
 
 USAGE = "Usage: ./findweights -agent <sklearn | homebrew> -state [U.S. state] -d1 <Initial date> -d2 [Ending date]"
 
@@ -71,7 +71,8 @@ def main(argv):
     :return: a dictionary mapping the independent variables with the weighted variable coefficients
     """
     agent_type, state, start_day, end_day = parse_args(argv)
-    independent_variables = ['Confirmed', 'Hospitalization_Rate']
+    #independent_variables = ['Confirmed', 'Hospitalization_Rate']
+    independent_variables = ['Confirmed']
     dependent_variable = 'Mortality_Rate'
     if agent_type == "sklearn":
         agent = SklearnAgent(independent_variables, dependent_variable)
@@ -80,7 +81,7 @@ def main(argv):
         agent = HomebrewAgent(independent_variables, dependent_variable)
         coefficients = run_agent(agent, state, start_day, end_day)
     elif agent_type == "neural":
-        agent = neural(independent_variables, dependent_variable)
+        agent = NeuralNetwork(independent_variables, dependent_variable)
         coefficients = run_agent(agent, state, start_day, end_day)
     print(coefficients)
     return coefficients
