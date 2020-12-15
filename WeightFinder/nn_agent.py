@@ -17,7 +17,7 @@ class NeuralNetworkAgent(MultipleRegressionAgent):
         :param dependent_variable: The list of dependent variables
         """
         super().__init__(independent_variables, dependent_variable)
-
+        self.agent = 'neural'
         # Accumulate scalars for the input matrices (used to map large integers to a 0-1 numberline)
         self.input_scalars = []
         for i in independent_variables:
@@ -99,4 +99,4 @@ class NeuralNetworkAgent(MultipleRegressionAgent):
             prediction += (value * coeff)
 
         unscaled = self.output_scalar.inverse_transform([prediction])
-        return unscaled[0]
+        return unscaled[0][0]

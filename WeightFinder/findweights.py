@@ -84,6 +84,8 @@ def main(argv):
         agent = NeuralNetworkAgent(independent_variables, dependent_variable)
         coefficients = run_agent(agent, state, start_day, end_day)
     print(coefficients)
+    print(agent.predict([3667, 12.26494527]))
+
     return coefficients
 
 

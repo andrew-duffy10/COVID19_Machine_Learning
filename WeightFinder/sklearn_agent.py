@@ -9,6 +9,7 @@ class SklearnAgent(MultipleRegressionAgent):
     def __init__(self, independent_variables, dependent_variable):
         super().__init__(independent_variables, dependent_variable)
         self.linear_regression = None
+        self.agent = 'sklearn'
 
     def run_regression(self, X, y):
         """
