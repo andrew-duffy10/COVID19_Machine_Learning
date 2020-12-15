@@ -14,14 +14,22 @@
 ## Assignments
 ### *Andrew:*
 
-- [ ] implement a homebrewed algorithm to replace the sklearn agent
-- [ ] add prediction functionality using the variable weights returned by our regression agents
+- [X] implement a homebrewed algorithm to replace the sklearn agent
+- [X] add prediction functionality using the variable weights returned by our regression agents
     - the prediction function should take in variable values and returns an estimate for the dependent variable
 - [ ] create a function that gets all the coefficients for each state over an interval and compares them
-- [ ] potentially use covid prevention measures for each state?
+- [X] potentially use covid prevention measures for each state?
     - look into discrete variable
         
 ### *Mahin:*
-- [ ] Create a neural network reg. implementation
-- [ ] find an easy and clean dataset to prove our methods work
-- [ ] Some kind of user interface that allows them to set variables and data sets
+- [X] Create a neural network reg. implementation
+- [X] find an easy and clean dataset to prove our methods work
+- [X] Some kind of user interface that allows them to set variables and data sets
+
+
+### Delivery
+- [ ] Clean up codebase - A
+- [ ] Get plots of data - M
+- [ ] Calculate error for each algorithm - A
+- [ ] run for each state - A
+- [ ] Work on report - M

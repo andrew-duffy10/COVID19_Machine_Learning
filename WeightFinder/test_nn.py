@@ -49,7 +49,7 @@ class NeuralNetworkAgent(MultipleRegressionAgent):
         """
         Trains the NN's weight vector (self.coefficients) over the given input data
         :param X:
-        :param training_outputs:
+        :param y:
         :param num_cycles:
         """
         for _ in range(num_cycles):
