@@ -1,11 +1,12 @@
-from learning_agent import MultipleRegressionAgent
+from WeightFinder.learning_agent import MultipleRegressionAgent
 from sklearn import linear_model
 from sklearn.neural_network import MLPRegressor
 from sklearn.datasets import make_regression
 from sklearn.model_selection import train_test_split
+import numpy as np
 
 
-class SklearnAgent(MultipleRegressionAgent):
+class SklearnAgentNN(MultipleRegressionAgent):
     """
     Implements a nueral net regression agent using the sklearn library's regression functions.
     """
@@ -33,4 +34,6 @@ class SklearnAgent(MultipleRegressionAgent):
         :param entry:
         :return:
         """
-        return self.regr.predict([entry])[0]
+        print(entry)
+        print(self.regr.predict(np.array(entry).reshape(-1,1)))
+        return self.regr.predict(np.array(entry).reshape(-1,1))

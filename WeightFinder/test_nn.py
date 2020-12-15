@@ -1,89 +1,102 @@
 import numpy as np
-from WeightFinder.data_accumulation import DataAcc
-from WeightFinder.learning_agent import MultipleRegressionAgent
-import sys
-from sklearn import datasets
 from sklearn.preprocessing import MinMaxScaler
-from scipy import stats
+
+from WeightFinder.learning_agent import MultipleRegressionAgent
 
 
-class NeuralNetwork(MultipleRegressionAgent):
+class NeuralNetworkAgent(MultipleRegressionAgent):
+    """
+    A neural network implementation using one hidden layer and sigmoid activation
+    """
 
     def __init__(self, independent_variables, dependent_variable):
+        """
+        Initialize parameters and weight vectors
+        NOTE: all 'scalars' are used for data normalization
+        :param independent_variables: The list of independent variables
+        :param dependent_variable: The list of dependent variables
+        """
         super().__init__(independent_variables, dependent_variable)
-        # seeding for random number generation
-        np.random.seed(1)
-        self.input_scalers = []
+
+        # Accumulate scalars for the input matrices (used to map large integers to a 0-1 numberline)
+        self.input_scalars = []
         for i in independent_variables:
-            self.input_scalers.append(MinMaxScaler(feature_range=(-1,1)))
-        self.output_scaler = MinMaxScaler(feature_range=(-1,1))
+            self.input_scalars.append(MinMaxScaler(feature_range=(0, 1)))
 
-        # converting weights to a 3 by 1 matrix with values from -1 to 1 and mean of 0
-        self.synaptic_weights = 2 * np.random.random((1, 1)) - 1
+        # Accumulate a scalar for the output matrix
+        self.output_scalar = MinMaxScaler(feature_range=(0, 1))
 
-    def sigmoid(self, x):
-        # applying the sigmoid function
-        return 1 / (1 + np.exp(-x))
+        self.coefficients = np.random.random((len(independent_variables), 1))
 
-    def sigmoid_derivative(self, x):
-        # computing derivative to the Sigmoid function
-        return x * (1 - x)
+    def sigmoid_activation(self, X):
+        """
+        Formats the input data, calculates the dot product with the stored coefficients, and calculates the sigmoid
+        :param X: Input data
+        :return: A sigmoid value 0 < n < 1
+        """
+        X = np.dot(X.astype(np.float128), self.coefficients)
+        return 1 / (1 + np.exp(-X))
 
-    def train(self, training_inputs, training_outputs, training_iterations):
-        # training the model to make accurate predictions while adjusting weights continually
-        for iteration in range(training_iterations):
-            # siphon the training data via  the neuron
-            output = self.think(training_inputs)
+    def sigmoid_loss(self, X):
+        """
+        Calculates the 'derivative' of the sigmoid output -> used for updating the weight vector
+        :param X: vector to be changed
+        :return: the derivative of the sigmoid output
+        """
+        return X * (1 - X)
 
-            error = training_outputs - output
-            #print(output)
-            #print(training_outputs)
-            #sys.exit(1)
-            adjustments = np.dot(training_inputs.T, error * self.sigmoid_derivative(output))
+    def train(self, X, y, num_cycles):
+        """
+        Trains the NN's weight vector (self.coefficients) over the given input data
+        :param X:
+        :param training_outputs:
+        :param num_cycles:
+        """
+        for _ in range(num_cycles):
+            prediction = self.sigmoid_activation(X)
+            predicted_vs_actual = y - prediction
+            diff = np.dot(X.T, predicted_vs_actual * self.sigmoid_loss(prediction))
+            self.coefficients += diff
 
-            self.synaptic_weights += adjustments
-
-    def think(self, inputs):
-        # passing the inputs via the neuron to get output
-        # converting values to floats
-
-        inputs = inputs.astype(np.float128)
-        output = self.sigmoid(np.dot(inputs, self.synaptic_weights))
-
-        return output
-
+        return prediction
 
     def run_regression(self, X, y):
-
+        """
+        Runs a Neural Network regression over the independent variables in X to see their weighted relationship to the
+        dependent variable in y.
+        :param X: A matrix with each column being an indepentent variable
+        :param y: A 1d matrix of target variable values
+        :return: a list of calculated weights for the dependent variables
+        """
         X = X.to_numpy(dtype=np.float128)
         y = np.array([y], dtype=np.float128).T
-        print(X)
-        self.output_scaler.fit(y)
-        self.input_scalers[0].fit(X)
-        X = self.input_scalers[0].transform(X)
-        y = self.output_scaler.transform(y)
-        print(X)
-        self.train(X, y, 15000)
-        self.variable_weights = self.synaptic_weights
+
+        for i in range(X.shape[1]):
+            self.input_scalars[i].fit(X[:, i].reshape(-1, 1))
+            X[:, i] = self.input_scalars[i].transform(X[:, i].reshape(-1, 1))[:, 0]
+        self.output_scalar.fit(y)
+
+        y = self.output_scalar.transform(y)
+        self.train(X, y, 10000)
+        self.variable_weights = self.coefficients
 
         return self.variable_weights
-        #self.train(X.to_numpy(dtype=np.float128), np.array([y.to_numpy()], dtype=np.float128).T, 15000)
 
-        #self.variable_weights = self.synaptic_weights
-
-    def predict(self,entry:list):
-
+    def predict(self, entry: list):
+        """
+        Calculates the target variable value given a set of independent values (corresponding to the trained array)
+        Formula: TargetValue = C1*entry[0] + C2*entry[1] +... + Cn*entry[n-1] + Y-intercept
+        :param entry: a list of values that map to the crained coefficients [c1 ... cn]
+        :return: a predicted value for the target variable
+        """
         prediction = 0
-        print("entry:",entry)
-        print("e2:",np.array([entry[0]]).reshape(-1, 1))
-        print("weights:",self.synaptic_weights)
-        entry = self.input_scalers[0].transform(np.array([entry[0]]).reshape(-1, 1))
-        for value, coeff in zip(entry, self.synaptic_weights):
+
+        weighted_entries = []
+        for param, scalar in zip(entry, self.input_scalars):
+            weighted_entries.append(scalar.transform(np.array([param]).reshape(-1, 1))[0])
+
+        for value, coeff in zip(weighted_entries, self.coefficients):
             prediction += (value * coeff)
 
-        print("prediction:")
-        return self.output_scaler.inverse_transform([prediction])
-
-
-        #print(self.think(np.array(X[0])))
-        #return self.variable_weights
+        unscaled = self.output_scalar.inverse_transform([prediction])
+        return unscaled[0]

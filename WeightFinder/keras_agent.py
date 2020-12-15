@@ -1,6 +1,8 @@
 # Imports
 import numpy as np
-
+from sklearn import datasets
+from sklearn.preprocessing import MinMaxScaler
+import sys
 # Each row is a training example, each column is a feature  [X1, X2, X3]
 X = np.array(([0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]), dtype=float)
 y = np.array(([0], [1], [1], [0]), dtype=float)
@@ -44,6 +46,13 @@ class NeuralNetwork:
         self.output = self.feedforward()
         self.backprop()
 
+
+data = datasets.load_boston()
+target = data.target
+print(target)
+print(data)
+
+sys.exit(1)
 
 NN = NeuralNetwork(X, y)
 for i in range(1500):  # trains the NN 1,000 times

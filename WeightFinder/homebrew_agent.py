@@ -20,7 +20,6 @@ class HomebrewAgent(MultipleRegressionAgent):
 
         :param X: A List of colums (variables) whose weights will be found with respect to y
         :param y: A column (variable) that is dependent on the variables in X
-        :raises NotImplementedError: This class is abstract. Call one of its extensions.
         :returns: the list of independent-variable coefficients
         """
         if len(X.shape) == 1:
@@ -34,7 +33,7 @@ class HomebrewAgent(MultipleRegressionAgent):
     @staticmethod
     def _add_intercept(X):
         """
-        Add a column to the input that can be used to accumulate an intercept value (target variable to independent variables)
+        Add a column to the input that can be used to accumulate an intercept/bias value (target variable to independent variables)
         :param X: The independent variable input matrix
         :return: The input matrix with another column of all 1's
         """
