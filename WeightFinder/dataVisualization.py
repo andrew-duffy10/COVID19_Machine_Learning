@@ -25,12 +25,14 @@ fields = ['Confirmed', 'Hospitalization_Rate','Mortality_Rate','Province_State']
 #GET DATA
 data_acc = DataAcc()
 #print(data_acc)
-data_acc.pull_data('04-15-2020','04-16-2020',fields)
+data_acc.pull_data('4-12-2020','11-08-2020',fields)
 #print(data_acc.data)
 #len(data_acc.data)
 data = data_acc.get_state('Alabama')
 data = data.dropna()
-
+print(data)
+print(type(data))
+data.to_csv('/Users/mahinmaster/Documents/Fall2020/ArtificialIntelligence/CS4100_FinalProject/WeightFinder/output.csv', index = False)
 #get list of independent variables
 independentVariables = []
 for i in independent:
