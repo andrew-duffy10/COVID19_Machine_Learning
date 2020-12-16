@@ -3,7 +3,7 @@ from abc import ABC, abstractmethod
 from WeightFinder.data_accumulation import DataAcc
 
 
-class MultipleRegressionAgent(ABC):
+class RegressionAgent(ABC):
     """
     A generic regression agent that is missing a regression algorithm. Extend this class and implement run_regression
     to calculate variable weights and make predictions.

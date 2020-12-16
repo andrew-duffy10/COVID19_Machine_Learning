@@ -1,10 +1,10 @@
 import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
-from WeightFinder.learning_agent import MultipleRegressionAgent
+from WeightFinder.learning_agent import RegressionAgent
 
 
-class NeuralNetworkAgent(MultipleRegressionAgent):
+class NeuralNetworkAgent(RegressionAgent):
     """
     A neural network implementation using one hidden layer and sigmoid activation
     """
@@ -48,9 +48,9 @@ class NeuralNetworkAgent(MultipleRegressionAgent):
     def train(self, X, y, num_cycles):
         """
         Trains the NN's weight vector (self.coefficients) over the given input data
-        :param X:
-        :param y:
-        :param num_cycles:
+        :param X: Input data for Independent Variables
+        :param y: Actual output data corresponding to the independent variables
+        :param num_cycles: number if iterations for training
         """
         for _ in range(num_cycles):
             prediction = self.sigmoid_activation(X)

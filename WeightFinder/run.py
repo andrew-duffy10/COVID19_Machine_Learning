@@ -16,19 +16,16 @@ run_type = True
 helper_agent = HomebrewAgent(independent_variables,dependent_variable)
 helper_agent.pull_data(start_day, end_day)
 dataAcc = helper_agent.data_acc
+output_path = "/Users/andrewduffy/Documents/Fall2020NEU/CS4100/Final Project/CS4100_FinalProject/regression_output.xlsx"
 
 
 def run_agent(agent, state):
     """
     Depending on the given arguments, either calculates aggregated variable weights across all 50 states
     on a given day or calculates variable weights for a specific state over a given time interval
-        usage 1: ./findweights -agent <sklearn | homebrew> -d1 <MM-DD-YYYY>
-        usage 2:./findweights -agent <sklearn | homebrew> -state [U.S. state] -d1 <MM-DD-YYYY> -d2 [MM-DD-YYYY]
 
     :param agent: an instance of some regression agent that will be used to calcualate variable weights
     :param state: an optional value containing the state to look at
-    :param start_day: The first day on the time interval to run a regression
-    :param end_day: The last day on the time interval to run a regression
     :return: a dictionary mapping the independent variables with the weighted variable coefficients
 
     """
@@ -76,7 +73,7 @@ def run_every_state():
             except:
                 print("error with:",state)
                 continue
-    full_table.to_excel("/Users/andrewduffy/Documents/Fall2020NEU/CS4100/Final Project/CS4100_FinalProject/regression_output.xlsx",sheet_name='Accumulated')
+    full_table.to_excel(output_path,sheet_name='Accumulated')
 
         #sys.exit(1)
 
@@ -98,16 +95,9 @@ def calculate_RMSE(predicted,actual):
 
 def main():
     """
-    Runs a multiple regression using the specified values in argv.
-
-    :param argv: the command line arguments
-    :return: a dictionary mapping the independent variables with the weighted variable coefficients
+    Runs a regression and accumulates data for all states
     """
-
-
-
     run_every_state()
-
     return
 
 
